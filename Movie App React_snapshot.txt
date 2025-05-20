@@ -1,0 +1,376 @@
+# Code Repository Snapshot: Movie App React
+
+--------------------------------------------
+Generated with reposnap v1.3.0
+Project: https://github.com/akhshyganesh/reposnap#readme
+Author: akhshyganesh
+Generated on: 20/5/2025 at 3:35:50 pm
+--------------------------------------------
+
+
+📄 README.md
+  ---
+  # React + Vite
+  
+  This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+  
+  Currently, two official plugins are available:
+  
+  - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+  - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+  
+  ## Expanding the ESLint configuration
+  
+  If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+  
+  ---
+
+📄 eslint.config.js
+  ---
+  import js from '@eslint/js'
+  import globals from 'globals'
+  import reactHooks from 'eslint-plugin-react-hooks'
+  import reactRefresh from 'eslint-plugin-react-refresh'
+  
+  export default [
+    { ignores: ['dist'] },
+    {
+      files: ['**/*.{js,jsx}'],
+      languageOptions: {
+        ecmaVersion: 2020,
+        globals: globals.browser,
+        parserOptions: {
+          ecmaVersion: 'latest',
+          ecmaFeatures: { jsx: true },
+          sourceType: 'module',
+        },
+      },
+      plugins: {
+        'react-hooks': reactHooks,
+        'react-refresh': reactRefresh,
+      },
+      rules: {
+        ...js.configs.recommended.rules,
+        ...reactHooks.configs.recommended.rules,
+        'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+        'react-refresh/only-export-components': [
+          'warn',
+          { allowConstantExport: true },
+        ],
+      },
+    },
+  ]
+  
+  ---
+
+📄 index.html
+  ---
+  <!doctype html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="./src/assets/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie App</title>
+  </head>
+  
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+  
+  </html>
+  ---
+
+📁 public/
+📁 src/
+  📄 App.css
+    ---
+    
+    ---
+
+  📄 App.jsx
+    ---
+    import { BrowserRouter, Routes, Route } from 'react-router-dom'
+    import { useState } from 'react'
+    import React from 'react'
+    import './App.css'
+    import Home from './pages/Home'
+    import Navbar from './pages/Navbar'
+    import Watchlist from './pages/Watchlist'
+    import { WatchListProvider } from './context/WatchListContext'
+    
+    function App() {
+      const [count, setCount] = useState(0)
+    
+      return (
+        <WatchListProvider>
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
+              <Route path='/' element={<Home />}></Route>
+              <Route path='/watchlist' element={<Watchlist />}></Route>
+            </Routes>
+          </BrowserRouter>
+        </WatchListProvider>
+      )
+    }
+    
+    export default App
+    
+    ---
+
+  📁 assets/
+  📁 components/
+    📄 GenreFilter.jsx
+      ---
+      import React from 'react'
+      
+      const GenreFilter = ({ genrelist, setselectedgenre }) => {
+          return (
+              <div>
+                  <select
+                        className="w-60 p-2 mb-4 bg-gray-900/60 backdrop-blur-md text-white border rounded hide-scrollbar"
+                      onChange={(e) => setselectedgenre(e.target.value)}
+                  >
+                      <option value="">All Genres</option>
+                      {genrelist.map(genre => (
+                          <option key={genre.id} value={genre.id}>
+                              {genre.name}
+                          </option>
+                      ))}
+                  </select>
+      
+              </div>
+          )
+      }
+      
+      export default GenreFilter
+      
+      ---
+
+    📄 Moviecard.jsx
+      ---
+      import React, { useContext } from 'react'
+      import { FaHeart, FaRegHeart } from 'react-icons/fa'
+      import Watchlist from '../pages/Watchlist'
+      import {WatchListContext} from '../context/WatchListContext'
+      
+      const Moviecard = ({ movie }) => {
+          const { WatchList, toggleWatchlist} = useContext(WatchListContext)
+        const inWatchList = WatchList.some(m =>m.id == movie.id)
+          return (
+              <div className='bg-gray-700 p-4 rounded-lg shadow-md text-white relative'>
+                  <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} alt={movie.title} className='w-full h-80 object-contain rounded-sm' />
+                  <h3 className='text-lg font-bold mt-4'>{movie.title}</h3>
+                  <p className='text-sm text-gray-400'>{movie.release_date}</p>
+                  <button className='absolute top-2 right-2 text-red-500 text-xl cursor-pointer' onClick={()=> toggleWatchlist(movie)}>
+                      {inWatchList ? <FaHeart /> : <FaRegHeart />}
+                  </button>
+              </div>
+          )
+      }
+      
+      export default Moviecard
+      
+      ---
+
+  📁 context/
+    📄 WatchListContext.jsx
+      ---
+      import { Children, createContext, useEffect, useState } from "react";
+      import React from "react";
+      export const WatchListContext = createContext()
+      
+      export const WatchListProvider = ({ children }) => {
+          const [WatchList, SetWatchList] = useState([])
+          const [genrelist, setgenrelist] = useState([])
+      
+          useEffect(() => {
+              fetch("https://api.themoviedb.org/3/genre/movie/list?api_key=b6d5fce307714e38f0f98d0971c59c20")
+                  .then((response) => response.json())
+                  .then((data) => setgenrelist(data.genres || []))
+                  .catch(err => console.error("Error fetching data:", err));
+          }, [])
+      
+          const toggleWatchlist = (movie) => {
+              const index = WatchList.findIndex((m) => m.id === movie.id)
+      
+              if (index === -1) {
+                  SetWatchList([...WatchList, movie])
+              } else {
+                  SetWatchList([...WatchList.slice(0, index), ...
+                      WatchList.slice(index + 1)
+                  ])
+              }
+          }
+      
+          return (
+              <WatchListContext.Provider value={{ WatchList, toggleWatchlist, genrelist }}>{children}</WatchListContext.Provider>
+          )
+      }
+      ---
+
+  📄 index.css
+    ---
+    @import "tailwindcss";
+    .hide-scrollbar::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+    
+    .hide-scrollbar {
+      scrollbar-width: none; /* For Firefox */
+    }
+    
+    ---
+
+  📄 main.jsx
+    ---
+    import { StrictMode } from 'react'
+    import React from 'react'
+    import { createRoot } from 'react-dom/client'
+    import './index.css'
+    import App from './App.jsx'
+    
+    createRoot(document.getElementById('root')).render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    )
+    
+    ---
+
+  📁 pages/
+    📄 Home.jsx
+      ---
+      import React, { useEffect, useState } from 'react'
+      import Moviecard from '../components/Moviecard'
+      
+      const Home = () => {
+          const [movies, setMovies] = useState([])
+          const [page, setpage] = useState(1)
+          const [search, setsearch] = useState("")
+      
+          useEffect(() => {
+              let url = `https://api.themoviedb.org/3/movie/popular?page=${page}&api_key=b6d5fce307714e38f0f98d0971c59c20`
+      
+              if (search) {
+                  url = `https://api.themoviedb.org/3/search/movie?query=${search}&api_key=b6d5fce307714e38f0f98d0971c59c20`
+              }
+      
+                  fetch(url)
+                  .then((response) => response.json())
+                  .then((data) => setMovies(data.results))
+                  .catch(err => console.error("Error fetching data:", err));
+          },[page,search])
+      
+      
+      
+       
+      
+          return (
+              <div className='p-4 pt-16'>
+                  <input
+                      type="text"
+                      placeholder="Search Movies..."
+                      className="p-2 w-3/4 md:w-1/2 border rounded border-gray-700 bg-gray-600/60 backdrop-blur-md text-white fixed top-16 left-1/2 transform -translate-x-1/2 z-10"
+                      onChange={(e) => setsearch(e.target.value)}
+                  />
+      
+                  <div className='movies-container grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-16'>
+                      {movies.map(movie => (
+                          <Moviecard key={movie.id} movie={movie} />
+                      ))}
+                  </div>
+      
+                  <div className='pagination-container flex justify-between mt-5'>
+                      <button disabled={page == 1} className='p-2 bg-gray-700 text-white rounded cursor-pointer' onClick={() => { setpage(prev => prev - 1) }}>PREV</button>
+                      <button className='p-2 bg-gray-700 text-white rounded cursor-pointer' onClick={() => { setpage(prev => prev + 1) }}>NEXT</button>
+                  </div>
+              </div>
+          )
+      }
+      
+      export default Home
+      ---
+
+    📄 Navbar.jsx
+      ---
+      import React, { useContext } from 'react'
+      import { Link } from 'react-router-dom'
+      import { WatchListContext } from '../context/WatchListContext'
+      const Navbar = () => {
+          const {WatchList} = useContext(WatchListContext)
+          return (
+              <div>
+                  <nav className='bg-gray-900 p-4 text-white flex justify-between fixed w-full top-0 z-10'>
+                      <Link className='text-xl font-bold' to="/">Movie App</Link>
+                      <Link className='text-xl' to="/watchlist">WatchList({WatchList.length})</Link>
+                  </nav>
+              </div>
+          )
+      }
+      
+      export default Navbar
+      
+      ---
+
+    📄 Watchlist.jsx
+      ---
+      import React, { useContext, useState } from 'react'
+      import GenreFilter from '../components/GenreFilter'
+      import { WatchListContext } from '../context/WatchListContext'
+      import Moviecard from '../components/Moviecard'
+      
+      const Watchlist = () => {
+        const { WatchList, genrelist } = useContext(WatchListContext)
+        const [search, setsearch] = useState("")
+        const [selectedgenre, setselectedgenre] = useState()
+      
+        const filteredMovies = WatchList.filter((movie) =>
+          movie.title.toLowerCase().includes(search.toLowerCase()) ||
+          movie.overview.toLowerCase().includes(search.toLowerCase())
+        ).filter((movie) => {
+          return !selectedgenre || movie.genre_ids.includes(Number(selectedgenre))
+        })
+      
+        return (
+          <div className='p-4 pt-16'>
+            <input
+              type="text"
+              placeholder="Search Movies..."
+              className="p-2 w-3/4 md:w-1/2 border rounded border-gray-700 bg-gray-600/60 backdrop-blur-md text-white fixed top-16 left-1/2 transform -translate-x-1/2 z-10"
+              onChange={(e) => setsearch(e.target.value)}
+            />
+            <div className='mt-16 flex justify-center'>
+              <GenreFilter genrelist={genrelist} setselectedgenre={setselectedgenre} />
+            </div>
+            <div className='movies-container grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-16'>
+              {filteredMovies.map(movie => (
+                <Moviecard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </div>
+        )
+      }
+      
+      export default Watchlist
+      
+      ---
+
+📄 vite.config.js
+  ---
+  import { defineConfig } from 'vite'
+  import tailwindcss from '@tailwindcss/vite'
+  export default defineConfig({
+    plugins: [
+      tailwindcss(),
+    ],
+  })
+  ---
+
+
+# Snapshot Summary
+Total files processed: 14
