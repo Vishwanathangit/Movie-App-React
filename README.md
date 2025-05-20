@@ -1,16 +1,71 @@
-<<<<<<< HEAD
-# React + Vite
+# 🎬 Movie App React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully functional and responsive movie app built with **React.js** that utilizes **The Movie Database (TMDb) API** to display popular movies. Users can **search, filter by genre**, and **paginate** through results. They can also add or remove movies from their **watchlist**, which is managed via **React Context API**. API key is securely stored using an **.env file**.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 [Live Demo](https://movie-app-react-ruby.vercel.app/)
 
-## Expanding the ESLint configuration
+## 📁 Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# Movie-App-React
->>>>>>> a253ab7ca9aad7c7e7e2b3271103d3a20ce9d669
+<pre>
+  ```
+  movie-app-react/
+├── public/
+├── src/
+│ ├── assets/
+│ ├── components/
+│ │ ├── GenreFilter.jsx
+│ │ └── Moviecard.jsx
+│ ├── context/
+│ │ └── WatchListContext.jsx
+│ ├── pages/
+│ │ ├── Home.jsx
+│ │ ├── Navbar.jsx
+│ │ └── Watchlist.jsx
+│ ├── App.css
+│ ├── App.jsx
+│ ├── index.css
+│ └── main.jsx
+├── .env
+├── .gitignore
+├── package.json
+├── vite.config.js
+├── README.md
+└── vercel.json
+  ```
+</pre>
+
+## 🌟 Features
+
+- 🔍 **Search Movies** by name.
+- 🎭 **Filter Movies** by genre.
+- 📄 **Pagination** to navigate between pages.
+- ❤️ **Watchlist** to save and remove favorite movies.
+- 🌐 **API Integration** with TMDb using Axios.
+- 🔒 **Environment Variables** for secure API key handling.
+- ⚛️ Built with **React**, **Vite**, and **Context API**.
+
+## 🛠️ Installation
+
+1. **Clone the Repository**
+
+   git clone https://github.com/Vishwanathangit/Movie-App-React.git
+   cd movie-app-react
+
+2. Install Dependencies
+
+  npm install
+
+3. Run the App
+
+   npm run dev
+
+## 🧩 Dependencies
+React
+Vite
+React Router DOM
+TMDb API
+
+📌 GitHub Repository
+🔗 GitHub Repo: [https://github.com/Vishwanathangit/Movie-App-React.git]
